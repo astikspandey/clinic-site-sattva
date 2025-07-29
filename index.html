@@ -2,17 +2,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-  <title>Redirecting…</title>
-  <meta http-equiv="refresh" content="0; url=https://6359033d1a3f.ngrok-free.app">
-</head>
+    <title>Redirecting…</title>
+  </head>
   <body>
     <script>
       fetch("https://6359033d1a3f.ngrok-free.app", {
         headers: {
           "ngrok-skip-browser-warning": "true"
         }
-      }).then(res => res.text())
-        .then(html => document.write(html));
+      })
+      .then(res => res.text())
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(err => {
+        document.body.innerText = "Failed to load: " + err;
+      });
     </script>
   </body>
 </html>
