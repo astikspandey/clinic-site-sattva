@@ -1,26 +1,11 @@
+<!-- redirect.html -->
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Redirecting…</title>
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=/api/proxy">
   </head>
   <body>
-    <p>Loading…</p>
-    <script>
-      fetch("https://6359033d1a3f.ngrok-free.app", {
-        method: "GET",
-        headers: {
-          "User-Agent": "MyCustomAgent/1.0"
-        }
-      })
-      .then(res => res.text())
-      .then(html => {
-        document.open();
-        document.write(html);
-        document.close();
-      })
-      .catch(err => {
-        document.body.innerText = "Failed to load: " + err;
-      });
-    </script>
+    <p>Redirecting to Ngrok endpoint...</p>
   </body>
 </html>
