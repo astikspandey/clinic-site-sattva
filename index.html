@@ -2,19 +2,25 @@
 <html>
   <head>
     <title>Redirecting…</title>
-    <style>
-      body, html {
-        margin: 0;
-        height: 100%;
-      }
-      iframe {
-        border: none;
-        width: 100%;
-        height: 100%;
-      }
-    </style>
   </head>
   <body>
-    <iframe src="https://6359033d1a3f.ngrok-free.app" allowfullscreen></iframe>
+    <p>Loading…</p>
+    <script>
+      fetch("https://6359033d1a3f.ngrok-free.app", {
+        method: "GET",
+        headers: {
+          "User-Agent": "MyCustomAgent/1.0"
+        }
+      })
+      .then(res => res.text())
+      .then(html => {
+        document.open();
+        document.write(html);
+        document.close();
+      })
+      .catch(err => {
+        document.body.innerText = "Failed to load: " + err;
+      });
+    </script>
   </body>
 </html>
