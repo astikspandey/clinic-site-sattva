@@ -1,0 +1,24 @@
+<script>
+(async () => {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('process') === 'done') {
+    document.body.innerHTML = "<h2>Posted!</h2><p>Please check your WhatsApp later.</p>";
+    return;
+  }
+
+  const booking = {};
+  for (const [k, v] of params.entries()) booking[k] = v;
+
+  try {
+    await fetch("http://localhost:8080/api/bookings", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(booking)
+    });
+  } catch (e) {
+    alert("Network error: " + e.message);
+  } finally {
+    window.location.href = "post.html?process=done";
+  }
+})();
+</script>

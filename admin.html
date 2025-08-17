@@ -1,0 +1,38 @@
+<script>
+const API_BASE = "http://localhost:8080";
+
+async function loadBookings() {
+  const res = await fetch(`${API_BASE}/api/bookings`);
+  const { bookings } = await res.json();
+  const container = document.getElementById('bookings-container');
+  container.innerHTML = "";
+
+  bookings.forEach(booking => {
+    const card = document.createElement('div');
+    card.innerHTML = `
+      <p><strong>Name:</strong> ${booking.name}</p>
+      <p><strong>WhatsApp:</strong> ${booking.whatsapp}</p>
+      <p><strong>Date:</strong> ${booking.date}</p>
+      <p><strong>Time:</strong> ${booking.time}</p>
+      <p><strong>Doctor:</strong> ${booking.doctor}</p>
+      <p><strong>Status:</strong> ${booking.status}</p>
+      <button class="ack-btn">Acknowledge</button>
+      <button class="wa-btn">WhatsApp</button>
+    `;
+    container.appendChild(card);
+
+    card.querySelector(".ack-btn").addEventListener("click", async () => {
+      await fetch(`${API_BASE}/api/bookings/${booking.id}/ack`, { method: "PATCH" });
+      loadBookings();
+    });
+
+    card.querySelector(".wa-btn").addEventListener("click", () => {
+      const phone = (booking.whatsapp || '').replace(/\D/g, '');
+      const message = `Hello ${booking.name}, here is your booking ID with ${booking.doctor}. Show this at reception: ${booking.id}`;
+      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, "_blank");
+    });
+  });
+}
+
+loadBookings();
+</script>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clinic Appointment Booking</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f7fb;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      color: #007bff;
+      margin-bottom: 15px;
+    }
+    .date-buttons, .time-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    .doctor-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: background 0.3s;
+    }
+    .blue {
+      background: #007bff;
+      color: white;
+    }
+    .blue:hover {
+      background: #0056b3;
+    }
+    .grey {
+      background: #ccc;
+      color: #666;
+      cursor: not-allowed;
+    }
+    .info-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    input {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 14px;
+      width: 100%;
+    }
+    .submit-btn {
+      margin-top: 15px;
+      background: #28a745;
+      color: white;
+    }
+    .submit-btn:hover {
+      background: #218838;
+    }
+    .selected {
+      background: #004080 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Book Appointment</h1>
+    
+    <div class="doctor-buttons">
+      <button class="blue">General Physician</button>
+      <button class="blue">Dentist</button>
+      <button class="blue">Pediatrician</button>
+    </div>
+
+    <div class="date-buttons">
+      <button class="blue" id="today-btn">Today</button>
+      <button class="blue" id="tomorrow-btn">Tomorrow</button>
+    </div>
+
+    <div class="time-buttons" id="time-buttons"></div>
+
+    <div class="info-box">
+      <input type="text" id="name" placeholder="Your Name" required>
+      <input type="text" id="whatsapp" placeholder="WhatsApp Number" required>
+    </div>
+
+    <button class="submit-btn">Confirm Booking</button>
+  </div>
+
+  <script>
+    const timeButtonsContainer = document.getElementById('time-buttons');
+    const now = new Date();
+    const currentHour = now.getHours();
+    
+    const times = [
+      {hour: 11, label: "11:00 AM"},
+      {hour: 12, label: "12:00 PM"},
+      {hour: 13, label: "1:00 PM"},
+      {hour: 14, label: "2:00 PM"},
+      {hour: 15, label: "3:00 PM"},
+      {hour: 16, label: "4:00 PM"},
+      {hour: 17, label: "5:00 PM"}
+    ];
+
+    function renderTimes(isTomorrow) {
+      timeButtonsContainer.innerHTML = "";
+      times.forEach(slot => {
+        const btn = document.createElement('button');
+        if (!isTomorrow && slot.hour <= currentHour) {
+          btn.className = 'grey';
+          btn.disabled = true;
+        } else {
+          btn.className = 'blue';
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('#time-buttons button').forEach(b => b.classList.remove('selected'));
+            btn.classList.add('selected');
+          });
+        }
+        btn.textContent = slot.label;
+        timeButtonsContainer.appendChild(btn);
+      });
+    }
+
+    renderTimes(false);
+
+    document.getElementById('today-btn').addEventListener('click', () => {
+      document.getElementById('today-btn').classList.add('selected');
+      document.getElementById('tomorrow-btn').classList.remove('selected');
+      renderTimes(false);
+    });
+
+    document.getElementById('tomorrow-btn').addEventListener('click', () => {
+      document.getElementById('tomorrow-btn').classList.add('selected');
+      document.getElementById('today-btn').classList.remove('selected');
+      renderTimes(true);
+    });
+
+    // Doctor selection button logic
+    document.querySelectorAll('.doctor-buttons button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.doctor-buttons button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+      });
+    });
+
+    // Add event listener for Confirm Booking button
+    document.querySelector('.submit-btn').addEventListener('click', () => {
+      const selectedDate = document.querySelector('.date-buttons .selected')?.textContent;
+      const selectedTime = document.querySelector('.time-buttons .selected')?.textContent;
+      let name = document.getElementById('name').value.trim();
+      let whatsapp = document.getElementById('whatsapp').value.trim();
+      const selectedDoctor = document.querySelector('.doctor-buttons .selected')?.textContent;
+
+      // Validation
+      if (!name || name.startsWith(' ')) {
+        alert("Please enter a valid name (cannot be empty or start with a space).");
+        return;
+      }
+      if (!/^\d{10}$/.test(whatsapp)) {
+        alert("Please enter a valid 10-digit WhatsApp number.");
+        return;
+      }
+      if (!selectedDate || !selectedTime || !selectedDoctor) {
+        alert("Please select a date, time, and doctor.");
+        return;
+      }
+
+      const booking = {
+        name,
+        whatsapp,
+        date: selectedDate,
+        time: selectedTime,
+        doctor: selectedDoctor
+      };
+
+      const query = new URLSearchParams(booking).toString();
+      window.location.href = `post.html?${query}`;
+    });
+
+  </script>
+</body>
+</html>
